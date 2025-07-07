@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logic Grid Puzzle Helper</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Logic Grid Puzzle Helper</h1>
+            <p class="subtitle">Organize your clues and solve logic puzzles with ease</p>
+        </header>
+
+        <main>
+            <div class="puzzle-section">
+                <div class="section-header">
+                    <h2>Grid Setup</h2>
+                    <button class="btn-primary" id="create-grid">Create New Grid</button>
+                </div>
+                
+                <div class="grid-controls">
+                    <div class="input-group">
+                        <label for="grid-size">Grid Size:</label>
+                        <select id="grid-size">
+                            <option value="3">3x3</option>
+                            <option value="4" selected>4x4</option>
+                            <option value="5">5x5</option>
+                            <option value="6">6x6</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="categories">Categories:</label>
+                        <input type="text" id="categories" placeholder="e.g., Names, Ages, Colors" />
+                    </div>
+                </div>
+
+                <div class="grid-container" id="grid-container">
+                    <div class="grid-placeholder">
+                        <div class="placeholder-icon">🧩</div>
+                        <p>Click "Create New Grid" to start solving your logic puzzle</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clues-section">
+                <div class="section-header">
+                    <h2>Clues & Notes</h2>
+                    <button class="btn-secondary" id="add-clue">Add Clue</button>
+                </div>
+                
+                <div class="clues-container" id="clues-container">
+                    <div class="clue-placeholder">
+                        <p>Add your puzzle clues here to keep track of them</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tools-section">
+                <div class="section-header">
+                    <h2>Tools</h2>
+                </div>
+                
+                <div class="tools-grid">
+                    <button class="tool-btn" id="clear-grid">
+                        <span class="tool-icon">🧹</span>
+                        Clear Grid
+                    </button>
+                    <button class="tool-btn" id="save-progress">
+                        <span class="tool-icon">💾</span>
+                        Save Progress
+                    </button>
+                    <button class="tool-btn" id="load-progress">
+                        <span class="tool-icon">📁</span>
+                        Load Progress
+                    </button>
+                    <button class="tool-btn" id="export-grid">
+                        <span class="tool-icon">📤</span>
+                        Export Grid
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Logic Grid Puzzle Helper - Built for puzzle enthusiasts</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
