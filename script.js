@@ -46,14 +46,19 @@ class LogicGridHelper {
     createGrid() {
         const categoriesInput = document.getElementById('categories').value;
         if (!categoriesInput.trim()) {
-            alert('Please enter categories for your puzzle (e.g., Names, Ages, Colors)');
+            alert('Please enter categories for your puzzle (e.g., Names, Ages, Colors, Places)');
             return;
         }
         
-        this.categories = categoriesInput.split(',').map(cat => cat.trim());
+        this.categories = categoriesInput.split(',').map(cat => cat.trim()).filter(cat => cat.length > 0);
         
         if (this.categories.length < 2) {
             alert('Please enter at least 2 categories separated by commas');
+            return;
+        }
+        
+        if (this.categories.length > 6) {
+            alert('Maximum 6 categories are supported for optimal display');
             return;
         }
         
@@ -65,34 +70,15 @@ class LogicGridHelper {
     
     generateGridHTML() {
         const size = this.gridSize;
+        const numCategories = this.categories.length;
         let html = '<div class="logic-grid">';
         
-        // Create grid table
-        html += '<table class="grid-table">';
-        
-        // Header row
-        html += '<tr class="grid-header">';
-        html += '<th class="corner-cell"></th>';
-        for (let i = 0; i < size; i++) {
-            html += `<th class="header-cell">${this.categories[0]} ${i + 1}</th>`;
-        }
-        html += '</tr>';
-        
-        // Data rows
-        for (let i = 0; i < size; i++) {
-            html += '<tr>';
-            html += `<th class="row-header">${this.categories[1] || 'Category'} ${i + 1}</th>`;
-            for (let j = 0; j < size; j++) {
-                html += `<td class="grid-cell" data-row="${i}" data-col="${j}">
-                    <div class="cell-content">
-                        <button class="cell-btn unknown" data-state="unknown">?</button>
-                    </div>
-                </td>`;
+        // Create multiple grids for each category pair
+        for (let catA = 0; catA < numCategories; catA++) {
+            for (let catB = catA + 1; catB < numCategories; catB++) {
+                html += this.generateSingleGridHTML(catA, catB, size);
             }
-            html += '</tr>';
         }
-        
-        html += '</table>';
         
         // Legend
         html += '<div class="grid-legend">';
@@ -104,6 +90,44 @@ class LogicGridHelper {
         html += '</div>';
         html += '</div>';
         
+        html += '</div>';
+        
+        return html;
+    }
+    
+    generateSingleGridHTML(catAIndex, catBIndex, size) {
+        const catA = this.categories[catAIndex];
+        const catB = this.categories[catBIndex];
+        
+        let html = `<div class="single-grid" data-cat-a="${catAIndex}" data-cat-b="${catBIndex}">`;
+        html += `<h4 class="grid-title">${catA} vs ${catB}</h4>`;
+        
+        // Create grid table
+        html += '<table class="grid-table">';
+        
+        // Header row
+        html += '<tr class="grid-header">';
+        html += '<th class="corner-cell"></th>';
+        for (let i = 0; i < size; i++) {
+            html += `<th class="header-cell">${catA} ${i + 1}</th>`;
+        }
+        html += '</tr>';
+        
+        // Data rows
+        for (let i = 0; i < size; i++) {
+            html += '<tr>';
+            html += `<th class="row-header">${catB} ${i + 1}</th>`;
+            for (let j = 0; j < size; j++) {
+                html += `<td class="grid-cell" data-cat-a="${catAIndex}" data-cat-b="${catBIndex}" data-row="${i}" data-col="${j}">
+                    <div class="cell-content">
+                        <button class="cell-btn unknown" data-state="unknown">?</button>
+                    </div>
+                </td>`;
+            }
+            html += '</tr>';
+        }
+        
+        html += '</table>';
         html += '</div>';
         
         return html;
@@ -144,13 +168,19 @@ class LogicGridHelper {
         
         // Save grid state
         const cell = button.closest('.grid-cell');
+        const catA = cell.dataset.catA;
+        const catB = cell.dataset.catB;
         const row = cell.dataset.row;
         const col = cell.dataset.col;
         
-        if (!this.gridData[row]) {
-            this.gridData[row] = {};
+        const gridKey = `${catA}-${catB}`;
+        if (!this.gridData[gridKey]) {
+            this.gridData[gridKey] = {};
         }
-        this.gridData[row][col] = newState;
+        if (!this.gridData[gridKey][row]) {
+            this.gridData[gridKey][row] = {};
+        }
+        this.gridData[gridKey][row][col] = newState;
     }
     
     addClue() {
@@ -248,6 +278,7 @@ class LogicGridHelper {
                         document.getElementById('categories').value = this.categories.join(', ');
                         
                         this.createGrid();
+                        this.restoreGridState();
                         this.updateCluesDisplay();
                         
                         alert('Progress loaded successfully!');
@@ -262,6 +293,32 @@ class LogicGridHelper {
         input.click();
     }
     
+    restoreGridState() {
+        // Restore the state of all grid cells
+        Object.keys(this.gridData).forEach(gridKey => {
+            const gridData = this.gridData[gridKey];
+            Object.keys(gridData).forEach(row => {
+                Object.keys(gridData[row]).forEach(col => {
+                    const state = gridData[row][col];
+                    const [catA, catB] = gridKey.split('-');
+                    const cell = document.querySelector(`[data-cat-a="${catA}"][data-cat-b="${catB}"][data-row="${row}"][data-col="${col}"]`);
+                    if (cell) {
+                        const button = cell.querySelector('.cell-btn');
+                        if (button) {
+                            button.dataset.state = state;
+                            button.className = `cell-btn ${state}`;
+                            switch (state) {
+                                case 'yes': button.textContent = '✓'; break;
+                                case 'no': button.textContent = '✗'; break;
+                                default: button.textContent = '?'; break;
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    }
+    
     exportGrid() {
         if (!this.categories.length) {
             alert('Please create a grid first before exporting.');
@@ -270,25 +327,33 @@ class LogicGridHelper {
         
         let exportText = `Logic Grid Puzzle - ${new Date().toLocaleDateString()}\n`;
         exportText += `Grid Size: ${this.gridSize}x${this.gridSize}\n`;
-        exportText += `Categories: ${this.categories.join(', ')}\n\n`;
+        exportText += `Categories: ${this.categories.join(', ')}\n`;
+        exportText += `Number of Category Pairs: ${this.categories.length * (this.categories.length - 1) / 2}\n\n`;
         
         exportText += 'Clues:\n';
         this.clues.forEach((clue, index) => {
             exportText += `${index + 1}. ${clue}\n`;
         });
         
-        exportText += '\nGrid State:\n';
-        for (let i = 0; i < this.gridSize; i++) {
-            let row = '';
-            for (let j = 0; j < this.gridSize; j++) {
-                const state = this.gridData[i] && this.gridData[i][j] || 'unknown';
-                switch (state) {
-                    case 'yes': row += '✓ '; break;
-                    case 'no': row += '✗ '; break;
-                    default: row += '? '; break;
+        exportText += '\nGrid States:\n';
+        for (let catA = 0; catA < this.categories.length; catA++) {
+            for (let catB = catA + 1; catB < this.categories.length; catB++) {
+                exportText += `\n${this.categories[catA]} vs ${this.categories[catB]}:\n`;
+                const gridKey = `${catA}-${catB}`;
+                
+                for (let i = 0; i < this.gridSize; i++) {
+                    let row = '';
+                    for (let j = 0; j < this.gridSize; j++) {
+                        const state = this.gridData[gridKey] && this.gridData[gridKey][i] && this.gridData[gridKey][i][j] || 'unknown';
+                        switch (state) {
+                            case 'yes': row += '✓ '; break;
+                            case 'no': row += '✗ '; break;
+                            default: row += '? '; break;
+                        }
+                    }
+                    exportText += row + '\n';
                 }
             }
-            exportText += row + '\n';
         }
         
         const textBlob = new Blob([exportText], { type: 'text/plain' });
