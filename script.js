@@ -139,6 +139,7 @@ class LogicGridHelper {
         // Generate category headers (top row)
         html += '<tr class="main-category-header">';
         html += '<th class="corner-cell"></th>';
+        html += '<th class="corner-cell"></th>';
         for (let cat = 0; cat < numCategories; cat++) {
             html += `<th class="main-category-name" colspan="${size}">${this.categories[cat]}</th>`;
         }
@@ -146,6 +147,7 @@ class LogicGridHelper {
         
         // Generate item headers (second row)
         html += '<tr class="main-item-header">';
+        html += '<th class="corner-cell"></th>';
         html += '<th class="corner-cell"></th>';
         for (let cat = 0; cat < numCategories; cat++) {
             for (let item = 0; item < size; item++) {
@@ -155,7 +157,7 @@ class LogicGridHelper {
         }
         html += '</tr>';
         
-        // Generate data rows (N×N category blocks)
+        // Generate data rows (include all categories)
         for (let rowCat = 0; rowCat < numCategories; rowCat++) {
             for (let rowItem = 0; rowItem < size; rowItem++) {
                 html += '<tr>';
@@ -173,20 +175,16 @@ class LogicGridHelper {
                 for (let colCat = 0; colCat < numCategories; colCat++) {
                     for (let colItem = 0; colItem < size; colItem++) {
                         
-                        // Check if we're below the diagonal (eliminate these)
-                        if (rowCat > colCat) {
-                            html += '<td class="eliminated-cell"></td>';
-                        }
-                        // Diagonal cells (same category)
-                        else if (rowCat === colCat) {
+                        // Block cells when row category <= column category (redundant comparisons)
+                        if (rowCat <= colCat) {
                             html += '<td class="blocked-cell"></td>';
                         }
-                        // Upper triangle - interactive cells
+                        // Interactive cells for unique category pairs
                         else {
-                            const catA = rowCat;
-                            const catB = colCat;
+                            const catA = colCat;
+                            const catB = rowCat;
                             
-                            html += `<td class="grid-cell" data-cat-a="${catA}" data-cat-b="${catB}" data-row="${rowItem}" data-col="${colItem}">
+                            html += `<td class="grid-cell" data-cat-a="${catA}" data-cat-b="${catB}" data-row="${colItem}" data-col="${rowItem}">
                                 <div class="cell-content">
                                     <button class="cell-btn unknown" data-state="unknown">?</button>
                                 </div>

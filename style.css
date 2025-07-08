@@ -428,33 +428,27 @@ main {
 }
 
 .eliminated-cell {
-    background: #f3f4f6;
-    border: 1px solid #d1d5db;
+    background: #4a5568;
+    border: 1px solid #2d3748;
+    position: relative;
     width: 40px;
     height: 40px;
-    position: relative;
 }
 
 .eliminated-cell::before {
     content: '';
     position: absolute;
-    top: 50%;
+    top: 0;
     left: 0;
     right: 0;
-    height: 1px;
-    background: #9ca3af;
-    transform: translateY(-50%);
-}
-
-.eliminated-cell::after {
-    content: '';
-    position: absolute;
-    top: 0;
     bottom: 0;
-    left: 50%;
-    width: 1px;
-    background: #9ca3af;
-    transform: translateX(-50%);
+    background: repeating-linear-gradient(
+        45deg,
+        #4a5568,
+        #4a5568 4px,
+        #2d3748 4px,
+        #2d3748 8px
+    );
 }
 
 .blocked-cell {
