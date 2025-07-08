@@ -193,15 +193,20 @@ class LogicGridHelper {
                     
                     for (let colItem = 0; colItem < size; colItem++) {
                         
-                        // All cells are interactive (unique category pairs)
-                        const catA = colCat;
-                        const catB = rowCat;
-                        
-                        html += `<td class="grid-cell" data-cat-a="${catA}" data-cat-b="${catB}" data-row="${colItem}" data-col="${rowItem}">
-                            <div class="cell-content">
-                                <button class="cell-btn unknown" data-state="unknown">?</button>
-                            </div>
-                        </td>`;
+                        // Compare row position vs column position in the generated grid
+                        // Include diagonal (rowIdx <= colIdx) for upper left triangle
+                        if (rowIdx >= colIdx) {
+                            const catA = colCat;
+                            const catB = rowCat;
+                            
+                            html += `<td class="grid-cell" data-cat-a="${catA}" data-cat-b="${catB}" data-row="${colItem}" data-col="${rowItem}">
+                                <div class="cell-content">
+                                    <button class="cell-btn unknown" data-state="unknown">?</button>
+                                </div>
+                            </td>`;
+                        } else {
+                            html += '<td class="blocked-cell"></td>';
+                        }
                     }
                 }
                 html += '</tr>';
@@ -218,7 +223,6 @@ class LogicGridHelper {
         html += '<div class="legend-item"><span class="legend-color yes"></span> Yes</div>';
         html += '<div class="legend-item"><span class="legend-color no"></span> No</div>';
         html += '<div class="legend-item"><span class="legend-color blocked"></span> Same Category</div>';
-        html += '<div class="legend-item"><span class="legend-color eliminated"></span> Eliminated</div>';
         html += '</div>';
         html += '</div>';
         
