@@ -22,13 +22,8 @@
                 
                 <div class="grid-controls">
                     <div class="input-group">
-                        <label for="grid-size">Grid Size:</label>
-                        <select id="grid-size">
-                            <option value="3">3x3</option>
-                            <option value="4" selected>4x4</option>
-                            <option value="5">5x5</option>
-                            <option value="6">6x6</option>
-                        </select>
+                        <label for="grid-size">Grid Size: <span id="grid-size-value">4</span>x<span id="grid-size-value-2">4</span></label>
+                        <input type="range" id="grid-size" min="3" max="6" value="4" step="1" class="slider">
                     </div>
                     
                     <div class="input-group">

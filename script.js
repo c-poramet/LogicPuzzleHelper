@@ -22,8 +22,11 @@ class LogicGridHelper {
         });
         
         // Grid size change
-        document.getElementById('grid-size').addEventListener('change', (e) => {
+        document.getElementById('grid-size').addEventListener('input', (e) => {
             this.gridSize = parseInt(e.target.value);
+            // Update the display values
+            document.getElementById('grid-size-value').textContent = this.gridSize;
+            document.getElementById('grid-size-value-2').textContent = this.gridSize;
         });
         
         // Add clue functionality
