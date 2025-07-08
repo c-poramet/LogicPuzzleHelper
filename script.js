@@ -194,18 +194,18 @@ class LogicGridHelper {
                     for (let colItem = 0; colItem < size; colItem++) {
                         
                         // Compare row position vs column position in the generated grid
-                        // Include diagonal (rowIdx <= colIdx) for upper left triangle
-                        if (rowIdx >= colIdx) {
+                        // Upper left triangle including diagonal (rowIdx <= colIdx)
+                        if (rowIdx + colIdx <= 2) {
                             const catA = colCat;
                             const catB = rowCat;
                             
                             html += `<td class="grid-cell" data-cat-a="${catA}" data-cat-b="${catB}" data-row="${colItem}" data-col="${rowItem}">
                                 <div class="cell-content">
-                                    <button class="cell-btn unknown" data-state="unknown">?</button>
+                                    <button class="cell-btn unknown" data-state="unknown">(${rowIdx},${colIdx})</button>
                                 </div>
                             </td>`;
                         } else {
-                            html += '<td class="blocked-cell"></td>';
+                            html += `<td class="blocked-cell">(${rowIdx},${colIdx})</td>`;
                         }
                     }
                 }
