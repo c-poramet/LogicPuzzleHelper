@@ -201,7 +201,7 @@ class LogicGridHelper {
                             
                             html += `<td class="grid-cell" data-cat-a="${catA}" data-cat-b="${catB}" data-row="${colItem}" data-col="${rowItem}">
                                 <div class="cell-content">
-                                    <button class="cell-btn unknown" data-state="unknown">(${rowIdx},${colIdx})</button>
+                                    <button class="cell-btn unknown" data-state="unknown">?</button>
                                 </div>
                             </td>`;
                         } else {
