@@ -133,6 +133,18 @@ class LogicGridHelper {
         const numCategories = this.categories.length;
         let html = '<div class="logic-grid">';
         
+        // Calculate column and row categories based on the algorithm
+        // Columns: first cat + cats 3,4,5... (skip cat 2)
+        const columnCats = [0]; // Start with first category
+        for (let i = 2; i < numCategories; i++) {
+            columnCats.push(i);
+        }
+        
+        // Rows: second cat + reverse of columns (excluding first cat)
+        const rowCats = [1]; // Start with second category
+        const reversedCols = [...columnCats.slice(1)].reverse(); // Get cats 3,4,5... and reverse
+        rowCats.push(...reversedCols);
+        
         // Create N×N grid structure
         html += '<table class="unified-grid-table">';
         
@@ -140,7 +152,8 @@ class LogicGridHelper {
         html += '<tr class="main-category-header">';
         html += '<th class="corner-cell"></th>';
         html += '<th class="corner-cell"></th>';
-        for (let cat = 0; cat < numCategories; cat++) {
+        for (let colIdx = 0; colIdx < columnCats.length; colIdx++) {
+            const cat = columnCats[colIdx];
             html += `<th class="main-category-name" colspan="${size}">${this.categories[cat]}</th>`;
         }
         html += '</tr>';
@@ -149,7 +162,8 @@ class LogicGridHelper {
         html += '<tr class="main-item-header">';
         html += '<th class="corner-cell"></th>';
         html += '<th class="corner-cell"></th>';
-        for (let cat = 0; cat < numCategories; cat++) {
+        for (let colIdx = 0; colIdx < columnCats.length; colIdx++) {
+            const cat = columnCats[colIdx];
             for (let item = 0; item < size; item++) {
                 const itemName = this.categoryItems[cat] ? this.categoryItems[cat][item] : `${this.categories[cat]} ${item + 1}`;
                 html += `<th class="main-item-name">${itemName}</th>`;
@@ -157,8 +171,10 @@ class LogicGridHelper {
         }
         html += '</tr>';
         
-        // Generate data rows (include all categories)
-        for (let rowCat = 0; rowCat < numCategories; rowCat++) {
+        // Generate data rows (N-1 rows following the algorithm)
+        for (let rowIdx = 0; rowIdx < rowCats.length; rowIdx++) {
+            const rowCat = rowCats[rowIdx];
+            
             for (let rowItem = 0; rowItem < size; rowItem++) {
                 html += '<tr>';
                 
@@ -172,24 +188,20 @@ class LogicGridHelper {
                 html += `<th class="row-main-item">${rowItemName}</th>`;
                 
                 // Generate cells for each column category
-                for (let colCat = 0; colCat < numCategories; colCat++) {
+                for (let colIdx = 0; colIdx < columnCats.length; colIdx++) {
+                    const colCat = columnCats[colIdx];
+                    
                     for (let colItem = 0; colItem < size; colItem++) {
                         
-                        // Block cells when row category <= column category (redundant comparisons)
-                        if (rowCat <= colCat) {
-                            html += '<td class="blocked-cell"></td>';
-                        }
-                        // Interactive cells for unique category pairs
-                        else {
-                            const catA = colCat;
-                            const catB = rowCat;
-                            
-                            html += `<td class="grid-cell" data-cat-a="${catA}" data-cat-b="${catB}" data-row="${colItem}" data-col="${rowItem}">
-                                <div class="cell-content">
-                                    <button class="cell-btn unknown" data-state="unknown">?</button>
-                                </div>
-                            </td>`;
-                        }
+                        // All cells are interactive (unique category pairs)
+                        const catA = colCat;
+                        const catB = rowCat;
+                        
+                        html += `<td class="grid-cell" data-cat-a="${catA}" data-cat-b="${catB}" data-row="${colItem}" data-col="${rowItem}">
+                            <div class="cell-content">
+                                <button class="cell-btn unknown" data-state="unknown">?</button>
+                            </div>
+                        </td>`;
                     }
                 }
                 html += '</tr>';
