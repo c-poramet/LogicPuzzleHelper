@@ -62,6 +62,37 @@ class LogicGridHelper {
         document.getElementById('export-grid').addEventListener('click', () => {
             this.exportGrid();
         });
+        
+        // Compact menu functionality
+        document.getElementById('menu-toggle').addEventListener('click', () => {
+            this.toggleCompactMenu();
+        });
+        
+        // Compact menu tool buttons
+        document.getElementById('compact-clear-grid').addEventListener('click', () => {
+            this.clearGrid();
+        });
+        
+        document.getElementById('compact-save-progress').addEventListener('click', () => {
+            this.saveProgress();
+        });
+        
+        document.getElementById('compact-load-progress').addEventListener('click', () => {
+            this.loadProgress();
+        });
+        
+        document.getElementById('compact-export-grid').addEventListener('click', () => {
+            this.exportGrid();
+        });
+        
+        document.getElementById('compact-add-clue').addEventListener('click', () => {
+            this.addClue();
+        });
+        
+        // Floating clues toggle
+        document.getElementById('toggle-clues').addEventListener('click', () => {
+            this.toggleFloatingClues();
+        });
     }
     
     setupCategories() {
@@ -141,6 +172,9 @@ class LogicGridHelper {
         
         // Hide items setup
         document.getElementById('items-setup').style.display = 'none';
+        
+        // Switch to fullscreen mode after grid generation
+        this.switchToFullscreenMode();
     }
     
     generateGridHTML() {
@@ -341,6 +375,7 @@ class LogicGridHelper {
         if (clueText && clueText.trim()) {
             this.clues.push(clueText.trim());
             this.updateCluesDisplay();
+            this.updateFloatingCluesDisplay();
         }
     }
     
@@ -368,12 +403,53 @@ class LogicGridHelper {
                 const index = parseInt(e.target.dataset.index);
                 this.clues.splice(index, 1);
                 this.updateCluesDisplay();
+                this.updateFloatingCluesDisplay();
+            });
+        });
+    }
+    
+    toggleFloatingClues() {
+        const floatingClues = document.getElementById('floating-clues');
+        const toggleBtn = document.getElementById('toggle-clues');
+        
+        floatingClues.classList.toggle('collapsed');
+        toggleBtn.textContent = floatingClues.classList.contains('collapsed') ? '+' : '−';
+    }
+    
+    updateFloatingCluesDisplay() {
+        const floatingCluesContent = document.getElementById('floating-clues-content');
+        
+        if (this.clues.length === 0) {
+            floatingCluesContent.innerHTML = '<div class="clue-placeholder"><p>No clues added yet</p></div>';
+            return;
+        }
+        
+        let html = '';
+        this.clues.forEach((clue, index) => {
+            html += `<div class="clue-item">
+                <div class="clue-text">${clue}</div>
+                <button class="delete-clue" data-index="${index}">×</button>
+            </div>`;
+        });
+        
+        floatingCluesContent.innerHTML = html;
+        
+        // Attach delete listeners
+        document.querySelectorAll('#floating-clues-content .delete-clue').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                this.clues.splice(index, 1);
+                this.updateCluesDisplay();
+                this.updateFloatingCluesDisplay();
             });
         });
     }
     
     clearGrid() {
         if (confirm('Are you sure you want to clear the grid? This will remove all progress.')) {
+            // Exit fullscreen mode first
+            this.exitFullscreenMode();
+            
             this.gridData = {};
             this.categoryItems = {};
             const gridContainer = document.getElementById('grid-container');
@@ -387,6 +463,7 @@ class LogicGridHelper {
             document.getElementById('items-setup').style.display = 'none';
             this.clues = [];
             this.updateCluesDisplay();
+            this.updateFloatingCluesDisplay();
         }
     }
     
@@ -438,6 +515,7 @@ class LogicGridHelper {
                         this.createGrid();
                         this.restoreGridState();
                         this.updateCluesDisplay();
+                        this.updateFloatingCluesDisplay();
                         
                         alert('Progress loaded successfully!');
                     } catch (error) {
@@ -558,6 +636,48 @@ class LogicGridHelper {
         const percentage = ((value - min) / (max - min)) * 100;
         
         slider.style.background = `linear-gradient(to right, #1e3a8a 0%, #1e3a8a ${percentage}%, #e2e8f0 ${percentage}%, #e2e8f0 100%)`;
+    }
+    
+    switchToFullscreenMode() {
+        // Add fullscreen mode class to body
+        document.body.classList.add('fullscreen-mode');
+        
+        // Move the grid to fullscreen container
+        const gridContent = document.querySelector('.logic-grid');
+        const fullscreenContainer = document.getElementById('fullscreen-grid-content');
+        
+        if (gridContent && fullscreenContainer) {
+            fullscreenContainer.appendChild(gridContent);
+        }
+        
+        // Show fullscreen grid and compact menu
+        document.getElementById('fullscreen-grid').style.display = 'flex';
+        document.getElementById('compact-menu').style.display = 'block';
+        
+        // Initialize floating clues display
+        this.updateFloatingCluesDisplay();
+    }
+    
+    toggleCompactMenu() {
+        const menuItems = document.getElementById('menu-items');
+        menuItems.classList.toggle('open');
+    }
+    
+    exitFullscreenMode() {
+        // Remove fullscreen mode class
+        document.body.classList.remove('fullscreen-mode');
+        
+        // Move grid back to original container
+        const gridContent = document.querySelector('.logic-grid');
+        const originalContainer = document.getElementById('grid-container');
+        
+        if (gridContent && originalContainer) {
+            originalContainer.appendChild(gridContent);
+        }
+        
+        // Hide fullscreen grid and compact menu
+        document.getElementById('fullscreen-grid').style.display = 'none';
+        document.getElementById('compact-menu').style.display = 'none';
     }
 }
 

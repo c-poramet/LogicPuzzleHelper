@@ -35,6 +35,30 @@
             </div>
         </header>
 
+        <!-- Compact circular menu (hidden by default) -->
+        <div class="compact-menu" id="compact-menu" style="display: none;">
+            <button class="menu-toggle" id="menu-toggle">
+                <span class="menu-icon">☰</span>
+            </button>
+            <div class="menu-items" id="menu-items">
+                <button class="compact-tool-btn" id="compact-clear-grid" title="Clear Grid">
+                    <span class="tool-icon">🧹</span>
+                </button>
+                <button class="compact-tool-btn" id="compact-save-progress" title="Save Progress">
+                    <span class="tool-icon">💾</span>
+                </button>
+                <button class="compact-tool-btn" id="compact-load-progress" title="Load Progress">
+                    <span class="tool-icon">📁</span>
+                </button>
+                <button class="compact-tool-btn" id="compact-export-grid" title="Export Grid">
+                    <span class="tool-icon">📤</span>
+                </button>
+                <button class="compact-tool-btn" id="compact-add-clue" title="Add Clue">
+                    <span class="tool-icon">📝</span>
+                </button>
+            </div>
+        </div>
+
         <main>
             <div class="puzzle-section">
                 <div class="section-header">
@@ -66,6 +90,24 @@
                     <div class="grid-placeholder">
                         <div class="placeholder-icon">🧩</div>
                         <p>Click "Setup Categories" to start creating your logic puzzle</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fullscreen grid view (hidden by default) -->
+            <div class="fullscreen-grid" id="fullscreen-grid" style="display: none;">
+                <div class="fullscreen-grid-content" id="fullscreen-grid-content">
+                    <!-- Grid will be moved here after generation -->
+                </div>
+                
+                <!-- Floating clues panel for fullscreen mode -->
+                <div class="floating-clues" id="floating-clues">
+                    <div class="floating-clues-header">
+                        <h3>Clues</h3>
+                        <button class="toggle-clues" id="toggle-clues">−</button>
+                    </div>
+                    <div class="floating-clues-content" id="floating-clues-content">
+                        <!-- Clues will be displayed here -->
                     </div>
                 </div>
             </div>
