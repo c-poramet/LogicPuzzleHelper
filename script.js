@@ -8,6 +8,9 @@ class LogicGridHelper {
         this.gridData = {};
         
         this.initializeEventListeners();
+        
+        // Initialize slider fill effect
+        this.initializeSliderFill();
     }
     
     initializeEventListeners() {
@@ -27,6 +30,15 @@ class LogicGridHelper {
             // Update the display values
             document.getElementById('grid-size-value').textContent = this.gridSize;
             document.getElementById('grid-size-value-2').textContent = this.gridSize;
+            
+            // Update slider fill effect
+            const slider = e.target;
+            const min = parseInt(slider.min);
+            const max = parseInt(slider.max);
+            const value = parseInt(slider.value);
+            const percentage = ((value - min) / (max - min)) * 100;
+            
+            slider.style.background = `linear-gradient(to right, #1e3a8a 0%, #1e3a8a ${percentage}%, #e2e8f0 ${percentage}%, #e2e8f0 100%)`;
         });
         
         // Add clue functionality
@@ -198,7 +210,7 @@ class LogicGridHelper {
                         
                         // Compare row position vs column position in the generated grid
                         // Upper left triangle including diagonal (rowIdx <= colIdx)
-                        if (rowIdx + colIdx <= 2) {
+                        if (rowIdx + colIdx <= numCategories - 2) {
                             const catA = colCat;
                             const catB = rowCat;
                             
@@ -536,6 +548,16 @@ class LogicGridHelper {
         link.click();
         
         URL.revokeObjectURL(url);
+    }
+    
+    initializeSliderFill() {
+        const slider = document.getElementById('grid-size');
+        const min = parseInt(slider.min);
+        const max = parseInt(slider.max);
+        const value = parseInt(slider.value);
+        const percentage = ((value - min) / (max - min)) * 100;
+        
+        slider.style.background = `linear-gradient(to right, #1e3a8a 0%, #1e3a8a ${percentage}%, #e2e8f0 ${percentage}%, #e2e8f0 100%)`;
     }
 }
 

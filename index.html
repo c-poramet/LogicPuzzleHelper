@@ -9,8 +9,30 @@
 <body>
     <div class="container">
         <header>
-            <h1>Logic Grid Puzzle Helper</h1>
-            <p class="subtitle">Organize your clues and solve logic puzzles with ease</p>
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>Logic Grid Puzzle Helper</h1>
+                    <p class="subtitle">Organize your clues and solve logic puzzles with ease</p>
+                </div>
+                <div class="header-tools">
+                    <button class="tool-btn" id="clear-grid">
+                        <span class="tool-icon">🧹</span>
+                        Clear
+                    </button>
+                    <button class="tool-btn" id="save-progress">
+                        <span class="tool-icon">💾</span>
+                        Save
+                    </button>
+                    <button class="tool-btn" id="load-progress">
+                        <span class="tool-icon">📁</span>
+                        Load
+                    </button>
+                    <button class="tool-btn" id="export-grid">
+                        <span class="tool-icon">📤</span>
+                        Export
+                    </button>
+                </div>
+            </div>
         </header>
 
         <main>
@@ -23,7 +45,7 @@
                 <div class="grid-controls">
                     <div class="input-group">
                         <label for="grid-size">Grid Size: <span id="grid-size-value">4</span>x<span id="grid-size-value-2">4</span></label>
-                        <input type="range" id="grid-size" min="3" max="6" value="4" step="1" class="slider">
+                        <input type="range" id="grid-size" min="4" max="10" value="4" step="1" class="slider">
                     </div>
                     
                     <div class="input-group">
@@ -58,31 +80,6 @@
                     <div class="clue-placeholder">
                         <p>Add your puzzle clues here to keep track of them</p>
                     </div>
-                </div>
-            </div>
-
-            <div class="tools-section">
-                <div class="section-header">
-                    <h2>Tools</h2>
-                </div>
-                
-                <div class="tools-grid">
-                    <button class="tool-btn" id="clear-grid">
-                        <span class="tool-icon">🧹</span>
-                        Clear Grid
-                    </button>
-                    <button class="tool-btn" id="save-progress">
-                        <span class="tool-icon">💾</span>
-                        Save Progress
-                    </button>
-                    <button class="tool-btn" id="load-progress">
-                        <span class="tool-icon">📁</span>
-                        Load Progress
-                    </button>
-                    <button class="tool-btn" id="export-grid">
-                        <span class="tool-icon">📤</span>
-                        Export Grid
-                    </button>
                 </div>
             </div>
         </main>
