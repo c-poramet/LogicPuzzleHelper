@@ -17,7 +17,7 @@
             <div class="puzzle-section">
                 <div class="section-header">
                     <h2>Grid Setup</h2>
-                    <button class="btn-primary" id="create-grid">Create New Grid</button>
+                    <button class="btn-primary" id="create-grid">Setup Categories</button>
                 </div>
                 
                 <div class="grid-controls">
@@ -33,14 +33,22 @@
                     
                     <div class="input-group">
                         <label for="categories">Categories:</label>
-                        <input type="text" id="categories" placeholder="e.g., Names, Ages, Colors, Places" />
+                        <input type="text" id="categories" placeholder="e.g., Owners, Breeds, Colors" />
                     </div>
+                </div>
+
+                <div class="items-setup" id="items-setup" style="display: none;">
+                    <h3>Enter Items for Each Category</h3>
+                    <div class="items-container" id="items-container">
+                        <!-- Dynamic item inputs will be generated here -->
+                    </div>
+                    <button class="btn-primary" id="generate-grid">Generate Grid</button>
                 </div>
 
                 <div class="grid-container" id="grid-container">
                     <div class="grid-placeholder">
                         <div class="placeholder-icon">🧩</div>
-                        <p>Click "Create New Grid" to start solving your logic puzzle</p>
+                        <p>Click "Setup Categories" to start creating your logic puzzle</p>
                     </div>
                 </div>
             </div>

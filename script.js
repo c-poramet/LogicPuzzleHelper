@@ -3,6 +3,7 @@ class LogicGridHelper {
     constructor() {
         this.gridSize = 4;
         this.categories = [];
+        this.categoryItems = {}; // Store actual item names for each category
         this.clues = [];
         this.gridData = {};
         
@@ -10,8 +11,13 @@ class LogicGridHelper {
     }
     
     initializeEventListeners() {
-        // Grid creation
+        // Grid setup - first step
         document.getElementById('create-grid').addEventListener('click', () => {
+            this.setupCategories();
+        });
+        
+        // Grid generation - second step
+        document.getElementById('generate-grid').addEventListener('click', () => {
             this.createGrid();
         });
         
@@ -43,10 +49,10 @@ class LogicGridHelper {
         });
     }
     
-    createGrid() {
+    setupCategories() {
         const categoriesInput = document.getElementById('categories').value;
         if (!categoriesInput.trim()) {
-            alert('Please enter categories for your puzzle (e.g., Names, Ages, Colors, Places)');
+            alert('Please enter categories for your puzzle (e.g., Owners, Breeds, Colors)');
             return;
         }
         
@@ -62,10 +68,64 @@ class LogicGridHelper {
             return;
         }
         
+        this.showItemsSetup();
+    }
+    
+    showItemsSetup() {
+        const itemsSetup = document.getElementById('items-setup');
+        const itemsContainer = document.getElementById('items-container');
+        
+        itemsContainer.innerHTML = '';
+        
+        this.categories.forEach((category, index) => {
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'category-items';
+            categoryDiv.innerHTML = `
+                <h4>${category}</h4>
+                <div class="items-inputs">
+                    ${Array.from({length: this.gridSize}, (_, i) => `
+                        <input type="text" class="item-input" data-category="${index}" data-index="${i}" 
+                               placeholder="${category} ${i + 1}" />
+                    `).join('')}
+                </div>
+            `;
+            itemsContainer.appendChild(categoryDiv);
+        });
+        
+        itemsSetup.style.display = 'block';
+    }
+    
+    createGrid() {
+        // Collect all item inputs
+        this.categoryItems = {};
+        let allFieldsFilled = true;
+        
+        this.categories.forEach((category, catIndex) => {
+            this.categoryItems[catIndex] = [];
+            const inputs = document.querySelectorAll(`[data-category="${catIndex}"]`);
+            
+            inputs.forEach((input, itemIndex) => {
+                const value = input.value.trim();
+                if (!value) {
+                    allFieldsFilled = false;
+                    return;
+                }
+                this.categoryItems[catIndex][itemIndex] = value;
+            });
+        });
+        
+        if (!allFieldsFilled) {
+            alert('Please fill in all item names for each category');
+            return;
+        }
+        
         const gridContainer = document.getElementById('grid-container');
         gridContainer.innerHTML = this.generateGridHTML();
         
         this.attachGridEventListeners();
+        
+        // Hide items setup
+        document.getElementById('items-setup').style.display = 'none';
     }
     
     generateGridHTML() {
@@ -73,12 +133,72 @@ class LogicGridHelper {
         const numCategories = this.categories.length;
         let html = '<div class="logic-grid">';
         
-        // Create multiple grids for each category pair
-        for (let catA = 0; catA < numCategories; catA++) {
-            for (let catB = catA + 1; catB < numCategories; catB++) {
-                html += this.generateSingleGridHTML(catA, catB, size);
+        // Create N×N grid structure
+        html += '<table class="unified-grid-table">';
+        
+        // Generate category headers (top row)
+        html += '<tr class="main-category-header">';
+        html += '<th class="corner-cell"></th>';
+        for (let cat = 0; cat < numCategories; cat++) {
+            html += `<th class="main-category-name" colspan="${size}">${this.categories[cat]}</th>`;
+        }
+        html += '</tr>';
+        
+        // Generate item headers (second row)
+        html += '<tr class="main-item-header">';
+        html += '<th class="corner-cell"></th>';
+        for (let cat = 0; cat < numCategories; cat++) {
+            for (let item = 0; item < size; item++) {
+                const itemName = this.categoryItems[cat] ? this.categoryItems[cat][item] : `${this.categories[cat]} ${item + 1}`;
+                html += `<th class="main-item-name">${itemName}</th>`;
             }
         }
+        html += '</tr>';
+        
+        // Generate data rows (N×N category blocks)
+        for (let rowCat = 0; rowCat < numCategories; rowCat++) {
+            for (let rowItem = 0; rowItem < size; rowItem++) {
+                html += '<tr>';
+                
+                // Row category header (only for first item of each category)
+                if (rowItem === 0) {
+                    html += `<th class="row-main-category" rowspan="${size}">${this.categories[rowCat]}</th>`;
+                }
+                
+                // Row item header
+                const rowItemName = this.categoryItems[rowCat] ? this.categoryItems[rowCat][rowItem] : `${this.categories[rowCat]} ${rowItem + 1}`;
+                html += `<th class="row-main-item">${rowItemName}</th>`;
+                
+                // Generate cells for each column category
+                for (let colCat = 0; colCat < numCategories; colCat++) {
+                    for (let colItem = 0; colItem < size; colItem++) {
+                        
+                        // Check if we're below the diagonal (eliminate these)
+                        if (rowCat > colCat) {
+                            html += '<td class="eliminated-cell"></td>';
+                        }
+                        // Diagonal cells (same category)
+                        else if (rowCat === colCat) {
+                            html += '<td class="blocked-cell"></td>';
+                        }
+                        // Upper triangle - interactive cells
+                        else {
+                            const catA = rowCat;
+                            const catB = colCat;
+                            
+                            html += `<td class="grid-cell" data-cat-a="${catA}" data-cat-b="${catB}" data-row="${rowItem}" data-col="${colItem}">
+                                <div class="cell-content">
+                                    <button class="cell-btn unknown" data-state="unknown">?</button>
+                                </div>
+                            </td>`;
+                        }
+                    }
+                }
+                html += '</tr>';
+            }
+        }
+        
+        html += '</table>';
         
         // Legend
         html += '<div class="grid-legend">';
@@ -87,6 +207,8 @@ class LogicGridHelper {
         html += '<div class="legend-item"><span class="legend-color unknown"></span> Unknown</div>';
         html += '<div class="legend-item"><span class="legend-color yes"></span> Yes</div>';
         html += '<div class="legend-item"><span class="legend-color no"></span> No</div>';
+        html += '<div class="legend-item"><span class="legend-color blocked"></span> Same Category</div>';
+        html += '<div class="legend-item"><span class="legend-color eliminated"></span> Eliminated</div>';
         html += '</div>';
         html += '</div>';
         
@@ -109,14 +231,16 @@ class LogicGridHelper {
         html += '<tr class="grid-header">';
         html += '<th class="corner-cell"></th>';
         for (let i = 0; i < size; i++) {
-            html += `<th class="header-cell">${catA} ${i + 1}</th>`;
+            const itemName = this.categoryItems[catAIndex] ? this.categoryItems[catAIndex][i] : `${catA} ${i + 1}`;
+            html += `<th class="header-cell">${itemName}</th>`;
         }
         html += '</tr>';
         
         // Data rows
         for (let i = 0; i < size; i++) {
             html += '<tr>';
-            html += `<th class="row-header">${catB} ${i + 1}</th>`;
+            const itemName = this.categoryItems[catBIndex] ? this.categoryItems[catBIndex][i] : `${catB} ${i + 1}`;
+            html += `<th class="row-header">${itemName}</th>`;
             for (let j = 0; j < size; j++) {
                 html += `<td class="grid-cell" data-cat-a="${catAIndex}" data-cat-b="${catBIndex}" data-row="${i}" data-col="${j}">
                     <div class="cell-content">
@@ -222,14 +346,16 @@ class LogicGridHelper {
     clearGrid() {
         if (confirm('Are you sure you want to clear the grid? This will remove all progress.')) {
             this.gridData = {};
+            this.categoryItems = {};
             const gridContainer = document.getElementById('grid-container');
             gridContainer.innerHTML = `
                 <div class="grid-placeholder">
                     <div class="placeholder-icon">🧩</div>
-                    <p>Click "Create New Grid" to start solving your logic puzzle</p>
+                    <p>Click "Setup Categories" to start creating your logic puzzle</p>
                 </div>
             `;
             document.getElementById('categories').value = '';
+            document.getElementById('items-setup').style.display = 'none';
             this.clues = [];
             this.updateCluesDisplay();
         }
@@ -239,6 +365,7 @@ class LogicGridHelper {
         const saveData = {
             gridSize: this.gridSize,
             categories: this.categories,
+            categoryItems: this.categoryItems,
             clues: this.clues,
             gridData: this.gridData,
             timestamp: new Date().toISOString()
@@ -270,12 +397,14 @@ class LogicGridHelper {
                         const data = JSON.parse(e.target.result);
                         this.gridSize = data.gridSize;
                         this.categories = data.categories;
+                        this.categoryItems = data.categoryItems || {};
                         this.clues = data.clues;
                         this.gridData = data.gridData;
                         
                         // Update UI
                         document.getElementById('grid-size').value = this.gridSize;
                         document.getElementById('categories').value = this.categories.join(', ');
+                        document.getElementById('items-setup').style.display = 'none';
                         
                         this.createGrid();
                         this.restoreGridState();
@@ -330,6 +459,19 @@ class LogicGridHelper {
         exportText += `Categories: ${this.categories.join(', ')}\n`;
         exportText += `Number of Category Pairs: ${this.categories.length * (this.categories.length - 1) / 2}\n\n`;
         
+        // Export category items
+        exportText += 'Category Items:\n';
+        this.categories.forEach((category, index) => {
+            exportText += `${category}: `;
+            if (this.categoryItems[index]) {
+                exportText += this.categoryItems[index].join(', ');
+            } else {
+                exportText += Array.from({length: this.gridSize}, (_, i) => `${category} ${i + 1}`).join(', ');
+            }
+            exportText += '\n';
+        });
+        exportText += '\n';
+        
         exportText += 'Clues:\n';
         this.clues.forEach((clue, index) => {
             exportText += `${index + 1}. ${clue}\n`;
@@ -339,19 +481,31 @@ class LogicGridHelper {
         for (let catA = 0; catA < this.categories.length; catA++) {
             for (let catB = catA + 1; catB < this.categories.length; catB++) {
                 exportText += `\n${this.categories[catA]} vs ${this.categories[catB]}:\n`;
-                const gridKey = `${catA}-${catB}`;
                 
+                // Header row
+                exportText += '        ';
+                for (let j = 0; j < this.gridSize; j++) {
+                    const itemName = this.categoryItems[catA] ? this.categoryItems[catA][j] : `${this.categories[catA]} ${j + 1}`;
+                    exportText += `${itemName.padEnd(12)} `;
+                }
+                exportText += '\n';
+                
+                const gridKey = `${catA}-${catB}`;
                 for (let i = 0; i < this.gridSize; i++) {
-                    let row = '';
+                    const rowItemName = this.categoryItems[catB] ? this.categoryItems[catB][i] : `${this.categories[catB]} ${i + 1}`;
+                    exportText += `${rowItemName.padEnd(8)} `;
+                    
                     for (let j = 0; j < this.gridSize; j++) {
                         const state = this.gridData[gridKey] && this.gridData[gridKey][i] && this.gridData[gridKey][i][j] || 'unknown';
+                        let symbol;
                         switch (state) {
-                            case 'yes': row += '✓ '; break;
-                            case 'no': row += '✗ '; break;
-                            default: row += '? '; break;
+                            case 'yes': symbol = '✓'; break;
+                            case 'no': symbol = '✗'; break;
+                            default: symbol = '?'; break;
                         }
+                        exportText += `${symbol.padEnd(12)} `;
                     }
-                    exportText += row + '\n';
+                    exportText += '\n';
                 }
             }
         }
