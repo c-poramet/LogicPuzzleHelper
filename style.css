@@ -470,6 +470,81 @@ main {
     transform: scale(1.1);
 }
 
+/* Clue Content Area Styling */
+.clue-content-area {
+    margin-top: 8px;
+}
+
+.order-clue-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.clue-control-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.clue-control-label {
+    font-size: 0.9rem;
+    color: #1e3a8a;
+    font-weight: 600;
+    min-width: 80px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.category-select {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    color: #4a5568;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+    outline: none;
+}
+
+.category-select:focus {
+    border-color: #1e3a8a;
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+}
+
+.category-select:hover {
+    border-color: #3730a3;
+}
+
+.add-clue-btn {
+    align-self: flex-start;
+    padding: 8px 16px;
+    background: linear-gradient(45deg, #1e3a8a 0%, #3730a3 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.3);
+}
+
+.add-clue-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);
+    background: linear-gradient(45deg, #1e40af 0%, #4338ca 100%);
+}
+
+.add-clue-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.3);
+}
+
 /* Tools Section */
 .tools-grid {
     display: grid;

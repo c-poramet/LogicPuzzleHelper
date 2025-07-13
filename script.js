@@ -409,6 +409,12 @@ class LogicGridHelper {
     }
     
     addClue() {
+        // Check if categories are set up
+        if (this.categories.length === 0) {
+            alert('Please set up categories first before adding clues.');
+            return;
+        }
+        
         // Remove placeholder if present
         const cluesContainer = document.getElementById('clues-container');
         const placeholder = cluesContainer.querySelector('.clue-placeholder');
@@ -427,12 +433,23 @@ class LogicGridHelper {
                     <option value="identity">Identity Clue</option>
                 </select>
             </div>
-            <textarea class="clue-textarea" rows="2" placeholder="Enter your clue..."></textarea>
+            <div class="clue-content-area">
+                ${this.generateClueContent('order')}
+            </div>
         `;
         cluesContainer.appendChild(clueCard);
         
-        // Add delete functionality
+        // Add event listeners
+        const clueTypeSelect = clueCard.querySelector('.clue-type-select');
         const deleteBtn = clueCard.querySelector('.delete-clue');
+        
+        // Handle clue type change
+        clueTypeSelect.addEventListener('change', (e) => {
+            const contentArea = clueCard.querySelector('.clue-content-area');
+            contentArea.innerHTML = this.generateClueContent(e.target.value);
+        });
+        
+        // Add delete functionality
         deleteBtn.addEventListener('click', () => {
             clueCard.remove();
             // Show placeholder if no clues remain
@@ -440,6 +457,29 @@ class LogicGridHelper {
                 cluesContainer.innerHTML = '<div class="clue-placeholder"><p>Add your puzzle clues here to keep track of them</p></div>';
             }
         });
+    }
+    
+    generateClueContent(clueType) {
+        switch (clueType) {
+            case 'order':
+                return `
+                    <div class="order-clue-controls">
+                        <div class="clue-control-row">
+                            <label class="clue-control-label">Category:</label>
+                            <select class="category-select">
+                                ${this.categories.map((cat, index) => `<option value="${index}">${cat}</option>`).join('')}
+                            </select>
+                        </div>
+                        <button class="add-clue-btn">Add</button>
+                    </div>
+                `;
+            case 'comparative':
+                return `<textarea class="clue-textarea" rows="2" placeholder="Enter your comparative clue..."></textarea>`;
+            case 'identity':
+                return `<textarea class="clue-textarea" rows="2" placeholder="Enter your identity clue..."></textarea>`;
+            default:
+                return `<textarea class="clue-textarea" rows="2" placeholder="Enter your clue..."></textarea>`;
+        }
     }
     
     updateCluesDisplay() {
