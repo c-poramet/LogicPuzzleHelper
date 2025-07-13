@@ -289,10 +289,75 @@ class LogicGridHelper {
     attachGridEventListeners() {
         const cellButtons = document.querySelectorAll('.cell-btn');
         cellButtons.forEach(btn => {
+            // Left click: ✓, Right click: ✗
             btn.addEventListener('click', (e) => {
-                this.toggleCell(e.target);
+                e.preventDefault();
+                this.setCell(btn, 'yes');
+            });
+            btn.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                this.setCell(btn, 'no');
             });
         });
+    }
+    
+    setCell(button, newState) {
+        // Set cell state and update UI
+        switch (newState) {
+            case 'yes':
+                button.textContent = '✓';
+                button.className = 'cell-btn yes';
+                break;
+            case 'no':
+                button.textContent = '✗';
+                button.className = 'cell-btn no';
+                break;
+            default:
+                button.textContent = '?';
+                button.className = 'cell-btn unknown';
+                newState = 'unknown';
+                break;
+        }
+        button.dataset.state = newState;
+
+        // Save grid state
+        const cell = button.closest('.grid-cell');
+        const catA = cell.dataset.catA;
+        const catB = cell.dataset.catB;
+        const row = cell.dataset.row;
+        const col = cell.dataset.col;
+        const gridKey = `${catA}-${catB}`;
+        if (!this.gridData[gridKey]) this.gridData[gridKey] = {};
+        if (!this.gridData[gridKey][row]) this.gridData[gridKey][row] = {};
+        this.gridData[gridKey][row][col] = newState;
+
+        // If set to ✓, cross all other cells in same row and col
+        if (newState === 'yes') {
+            this.crossRowCol(catA, catB, row, col);
+        }
+    }
+
+    crossRowCol(catA, catB, row, col) {
+        // Cross all other cells in the same row and column for this grid
+        const gridKey = `${catA}-${catB}`;
+        // Cross row
+        for (let c = 0; c < this.gridSize; c++) {
+            if (c != col) {
+                const cell = document.querySelector(`.grid-cell[data-cat-a="${catA}"][data-cat-b="${catB}"][data-row="${row}"][data-col="${c}"] .cell-btn`);
+                if (cell && cell.dataset.state !== 'yes') {
+                    this.setCell(cell, 'no');
+                }
+            }
+        }
+        // Cross column
+        for (let r = 0; r < this.gridSize; r++) {
+            if (r != row) {
+                const cell = document.querySelector(`.grid-cell[data-cat-a="${catA}"][data-cat-b="${catB}"][data-row="${r}"][data-col="${col}"] .cell-btn`);
+                if (cell && cell.dataset.state !== 'yes') {
+                    this.setCell(cell, 'no');
+                }
+            }
+        }
     }
     
     toggleCell(button) {
