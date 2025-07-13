@@ -519,7 +519,6 @@ main {
 }
 
 .add-clue-btn {
-    align-self: flex-start;
     padding: 8px 16px;
     background: linear-gradient(45deg, #1e3a8a 0%, #3730a3 100%);
     color: white;
@@ -1097,4 +1096,128 @@ footer a:hover, footer svg:hover {
         min-height: 300px;
         max-height: 400px;
     }
+}
+
+/* Order Clue Styling */
+.add-button-container {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+}
+
+.order-items-section {
+    min-height: 20px;
+    margin: 12px 0;
+}
+
+.order-item-card {
+    background: rgba(248, 250, 252, 0.8);
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.order-item-card:hover {
+    background: rgba(241, 245, 249, 0.9);
+    border-color: #1e3a8a;
+}
+
+.order-item-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.order-position {
+    background: linear-gradient(45deg, #1e3a8a 0%, #3730a3 100%);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.item-select {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    color: #4a5568;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+    outline: none;
+}
+
+.item-select:focus {
+    border-color: #1e3a8a;
+    box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+}
+
+.item-select:hover {
+    border-color: #3730a3;
+}
+
+.remove-order-item {
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #fc8181, #e53e3e);
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.remove-order-item:hover {
+    background: linear-gradient(45deg, #e53e3e, #c53030);
+    transform: scale(1.1);
+}
+
+.render-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.render-clue-btn {
+    padding: 10px 20px;
+    background: linear-gradient(45deg, #059669 0%, #047857 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+.render-clue-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+    background: linear-gradient(45deg, #047857 0%, #065f46 100%);
+}
+
+.render-clue-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
 }

@@ -447,7 +447,11 @@ class LogicGridHelper {
         clueTypeSelect.addEventListener('change', (e) => {
             const contentArea = clueCard.querySelector('.clue-content-area');
             contentArea.innerHTML = this.generateClueContent(e.target.value);
+            this.attachOrderClueListeners(clueCard);
         });
+        
+        // Attach order clue listeners for initial load
+        this.attachOrderClueListeners(clueCard);
         
         // Add delete functionality
         deleteBtn.addEventListener('click', () => {
@@ -470,7 +474,15 @@ class LogicGridHelper {
                                 ${this.categories.map((cat, index) => `<option value="${index}">${cat}</option>`).join('')}
                             </select>
                         </div>
-                        <button class="add-clue-btn">Add</button>
+                        <div class="add-button-container">
+                            <button class="add-clue-btn">Add</button>
+                        </div>
+                        <div class="order-items-section">
+                            <!-- Order items will be added here -->
+                        </div>
+                        <div class="render-button-container" style="display: none;">
+                            <button class="render-clue-btn">Render</button>
+                        </div>
                     </div>
                 `;
             case 'comparative':
@@ -480,6 +492,79 @@ class LogicGridHelper {
             default:
                 return `<textarea class="clue-textarea" rows="2" placeholder="Enter your clue..."></textarea>`;
         }
+    }
+    
+    attachOrderClueListeners(clueCard) {
+        const addBtn = clueCard.querySelector('.add-clue-btn');
+        const categorySelect = clueCard.querySelector('.category-select');
+        const orderItemsSection = clueCard.querySelector('.order-items-section');
+        const renderButtonContainer = clueCard.querySelector('.render-button-container');
+        const renderBtn = clueCard.querySelector('.render-clue-btn');
+        
+        if (addBtn && categorySelect && orderItemsSection) {
+            addBtn.addEventListener('click', () => {
+                const selectedCategoryIndex = categorySelect.value;
+                const categoryItems = this.categoryItems[selectedCategoryIndex];
+                const currentItems = orderItemsSection.children.length;
+                
+                if (currentItems >= this.gridSize) {
+                    alert(`Maximum ${this.gridSize} items allowed for this grid size.`);
+                    return;
+                }
+                
+                if (!categoryItems || categoryItems.length === 0) {
+                    alert('Please generate the grid first to populate category items.');
+                    return;
+                }
+                
+                // Create order item card
+                const orderItem = document.createElement('div');
+                orderItem.className = 'order-item-card';
+                orderItem.innerHTML = `
+                    <div class="order-item-header">
+                        <span class="order-position">${currentItems + 1}</span>
+                        <select class="item-select">
+                            <option value="">Select item...</option>
+                            ${categoryItems.map((item, index) => `<option value="${index}">${item}</option>`).join('')}
+                        </select>
+                        <button class="remove-order-item">×</button>
+                    </div>
+                `;
+                
+                orderItemsSection.appendChild(orderItem);
+                
+                // Add remove functionality
+                const removeBtn = orderItem.querySelector('.remove-order-item');
+                removeBtn.addEventListener('click', () => {
+                    orderItem.remove();
+                    this.updateOrderPositions(orderItemsSection);
+                    
+                    // Hide render button if no items
+                    if (orderItemsSection.children.length === 0) {
+                        renderButtonContainer.style.display = 'none';
+                    }
+                });
+                
+                // Show render button
+                renderButtonContainer.style.display = 'block';
+            });
+        }
+        
+        if (renderBtn) {
+            renderBtn.addEventListener('click', () => {
+                // Render functionality will be implemented later
+                console.log('Render order clue');
+            });
+        }
+    }
+    
+    updateOrderPositions(orderItemsSection) {
+        Array.from(orderItemsSection.children).forEach((item, index) => {
+            const positionSpan = item.querySelector('.order-position');
+            if (positionSpan) {
+                positionSpan.textContent = index + 1;
+            }
+        });
     }
     
     updateCluesDisplay() {
