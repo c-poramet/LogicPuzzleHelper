@@ -338,25 +338,112 @@ main {
 
 .clue-item {
     position: relative;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
     padding: 16px;
     margin-bottom: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
 }
 
 .clue-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    border-color: #1e3a8a;
 }
 
-.clue-text {
-    font-size: 1rem;
-    line-height: 1.5;
+.clue-item .clue-type-label {
+    font-size: 0.9rem;
+    color: #1e3a8a;
+    font-weight: 600;
+    margin-right: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.clue-item .clue-type-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 8px;
+}
+
+.clue-item .delete-clue {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #fc8181, #e53e3e);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(229, 62, 62, 0.3);
+}
+
+.clue-item .delete-clue:hover {
+    background: linear-gradient(45deg, #e53e3e, #c53030);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+}
+
+.clue-type-select {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
     color: #4a5568;
-    margin-right: 30px;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+    outline: none;
+}
+
+.clue-type-select:focus {
+    border-color: #1e3a8a;
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+}
+
+.clue-type-select:hover {
+    border-color: #3730a3;
+}
+
+.clue-textarea {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.95rem;
+    color: #4a5568;
+    font-family: inherit;
+    line-height: 1.5;
+    transition: border-color 0.3s ease;
+    outline: none;
+    resize: vertical;
+    min-height: 60px;
+}
+
+.clue-textarea:focus {
+    border-color: #1e3a8a;
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+}
+
+.clue-textarea:hover {
+    border-color: #3730a3;
+}
+
+.clue-textarea::placeholder {
+    color: #a0aec0;
+    font-style: italic;
 }
 
 .delete-clue {

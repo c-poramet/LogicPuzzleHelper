@@ -409,11 +409,37 @@ class LogicGridHelper {
     }
     
     addClue() {
-        const clueText = prompt('Enter your clue:');
-        if (clueText && clueText.trim()) {
-            this.clues.push(clueText.trim());
-            this.updateCluesDisplay();
-        }
+        // Remove placeholder if present
+        const cluesContainer = document.getElementById('clues-container');
+        const placeholder = cluesContainer.querySelector('.clue-placeholder');
+        if (placeholder) placeholder.remove();
+        
+        // Create clue card
+        const clueCard = document.createElement('div');
+        clueCard.className = 'clue-item';
+        clueCard.innerHTML = `
+            <button class="delete-clue">×</button>
+            <div class="clue-type-row">
+                <label class="clue-type-label">Clue Type:</label>
+                <select class="clue-type-select">
+                    <option value="order">Order Clue</option>
+                    <option value="comparative">Comparative Clue</option>
+                    <option value="identity">Identity Clue</option>
+                </select>
+            </div>
+            <textarea class="clue-textarea" rows="2" placeholder="Enter your clue..."></textarea>
+        `;
+        cluesContainer.appendChild(clueCard);
+        
+        // Add delete functionality
+        const deleteBtn = clueCard.querySelector('.delete-clue');
+        deleteBtn.addEventListener('click', () => {
+            clueCard.remove();
+            // Show placeholder if no clues remain
+            if (cluesContainer.children.length === 0) {
+                cluesContainer.innerHTML = '<div class="clue-placeholder"><p>Add your puzzle clues here to keep track of them</p></div>';
+            }
+        });
     }
     
     updateCluesDisplay() {
