@@ -214,7 +214,12 @@ class LogicGridHelper {
                             const catA = colCat;
                             const catB = rowCat;
                             
-                            html += `<td class="grid-cell" data-cat-a="${catA}" data-cat-b="${catB}" data-row="${colItem}" data-col="${rowItem}">
+                            // Determine category block for alternating colors
+                            // Each block represents the intersection of two categories
+                            const blockIndex = this.getCategoryBlockIndex(rowIdx, colIdx, numCategories);
+                            const blockClass = blockIndex % 2 === 0 ? 'cat-block-even' : 'cat-block-odd';
+                            
+                            html += `<td class="grid-cell ${blockClass}" data-cat-a="${catA}" data-cat-b="${catB}" data-row="${colItem}" data-col="${rowItem}">
                                 <div class="cell-content">
                                     <button class="cell-btn unknown" data-state="unknown">?</button>
                                 </div>
@@ -781,6 +786,13 @@ class LogicGridHelper {
         const percentage = ((value - min) / (max - min)) * 100;
         
         slider.style.background = `linear-gradient(to right, #1e3a8a 0%, #1e3a8a ${percentage}%, #e2e8f0 ${percentage}%, #e2e8f0 100%)`;
+    }
+    
+    getCategoryBlockIndex(rowIdx, colIdx, numCategories) {
+        // Create a unique index for each category block intersection
+        // This ensures that each block (representing the intersection of two categories) 
+        // gets a consistent color assignment
+        return rowIdx + colIdx;
     }
 }
 
