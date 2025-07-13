@@ -289,14 +289,21 @@ class LogicGridHelper {
     attachGridEventListeners() {
         const cellButtons = document.querySelectorAll('.cell-btn');
         cellButtons.forEach(btn => {
-            // Left click: ✓, Right click: ✗
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.setCell(btn, 'yes');
+                // Only allow left-click if not currently a cross
+                if (btn.dataset.state !== 'no') {
+                    this.setCell(btn, 'yes');
+                }
             });
             btn.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
-                this.setCell(btn, 'no');
+                // If currently a cross, right click returns to unknown
+                if (btn.dataset.state === 'no') {
+                    this.setCell(btn, 'unknown');
+                } else {
+                    this.setCell(btn, 'no');
+                }
             });
         });
     }
