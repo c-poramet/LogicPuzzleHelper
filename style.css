@@ -725,17 +725,44 @@ main {
     );
 }
 
+/* Grid Cell Alternating Colors (Chessboard Pattern) */
 .grid-cell {
     padding: 2px;
     border: 1px solid #d1d5db;
     text-align: center;
-    background: white;
     width: 40px;
     height: 40px;
+    position: relative;
+}
+
+.grid-cell:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.grid-cell:nth-child(odd) {
+    background: white;
+}
+
+/* Alternative approach using CSS for true chessboard pattern */
+.unified-grid-table tr:nth-child(even) .grid-cell:nth-child(even) {
+    background: white;
+}
+
+.unified-grid-table tr:nth-child(even) .grid-cell:nth-child(odd) {
+    background: #f1f3f4;
+}
+
+.unified-grid-table tr:nth-child(odd) .grid-cell:nth-child(even) {
+    background: #f1f3f4;
+}
+
+.unified-grid-table tr:nth-child(odd) .grid-cell:nth-child(odd) {
+    background: white;
 }
 
 .grid-cell:hover {
-    background: #f3f4f6;
+    background: #e3f2fd !important;
+    transition: background-color 0.2s ease;
 }
 
 .cell-content {
